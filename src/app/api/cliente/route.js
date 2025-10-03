@@ -1,20 +1,22 @@
 import { prisma } from "../../../lib/prisma";
 
-export async function GET(request) {
-  const { searchParams } = new URL(request.url);
-  const query = searchParams.get("query") || "";
+export async function GET() {
+  try {
+    const clientes = await prisma.cliente.findMany({
+      select: {
+        id: true,
+        nome: true,
+        cpf: true,
+        email: true,
+        telefone: true
+      }
 
-  const clientes = await prisma.cliente.findMany({
-    select: {
-      id: true,
-      nome: true,
-      cpf: true,
-      email: true,
-      telefone: true
-    }
-
-  })
-  return Response.json(clientes);
+    })
+    return Response.json(clientes);
+  } catch (error) {
+    console.error("Erro ao cadastrar cliente:", error);
+    return Response.json({ error: "Erro ao cadastrar cliente" });
+  }
 }
 
 
